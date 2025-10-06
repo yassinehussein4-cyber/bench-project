@@ -1,4 +1,3 @@
-// src/components/ProductGrid.jsx
 import Add from "../assets/Add.svg";
 import { useCart } from "../lib/Cart";
 
