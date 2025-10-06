@@ -1,8 +1,7 @@
-// components/Header.jsx
 import { Link } from "react-router-dom";
 import { useCart } from "../lib/Cart";
 
-export default function Header({ onOpenCart /* onOpenProfile (no longer needed for /profile page) */ }) {
+export default function Header({ onOpenCart }) {
   const items = useCart((s) => s.items);
   const totalQty = items.reduce((n, i) => n + i.qty, 0);
 

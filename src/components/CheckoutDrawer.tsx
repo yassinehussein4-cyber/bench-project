@@ -33,7 +33,6 @@ export default function CheckoutDrawer({ onClose, onPlaced  }) {
     onClose();
   };
 
-  // z-index so backdrop is clickable and drawer is on top
   return (
     <>
       <div

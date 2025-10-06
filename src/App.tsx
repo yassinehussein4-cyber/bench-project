@@ -18,7 +18,9 @@ export default function App() {
   const location = useLocation();
 
   const [products, setProducts] = useState<any[]>([]);
-  const [categories, setCategories] = useState<{ id: string; title: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; title: string }[]>(
+    []
+  );
   const [activeCategoryId, setActiveCategoryId] = useState("all");
   const [openProduct, setOpenProduct] = useState<any>(null);
 
@@ -39,7 +41,10 @@ export default function App() {
     (async () => {
       try {
         setLoading(true);
-        const [p, c] = await Promise.all([fetchProducts(), fetchCategoriesFromCMS()]);
+        const [p, c] = await Promise.all([
+          fetchProducts(),
+          fetchCategoriesFromCMS(),
+        ]);
         setProducts(p);
         setCategories([{ id: "all", title: "All" }, ...c]);
       } catch (e) {
@@ -86,7 +91,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header onOpenCart={() => setShowCart(true)} onOpenProfile={() => (window.location.href = "/profile")} />
+      <Header
+        onOpenCart={() => setShowCart(true)}
+        onOpenProfile={() => (window.location.href = "/profile")}
+      />
 
       <main className="container">
         <Routes>
@@ -96,44 +104,43 @@ export default function App() {
               <>
                 {err && <div className="text-red-600 font-semibold">{err}</div>}
 
-{/* NEW */}
-<section className="toolbar">
-  <div className="toolbar__side"></div>
+                {/* NEW */}
+                <section className="toolbar">
+                  <div className="toolbar__side"></div>
 
-  <div className="toolbar__search">
-    <input
-      type="text"
-      placeholder="Search products…"
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      className="toolbar__searchInput"
-    />
-  </div>
+                  <div className="toolbar__search">
+                    <input
+                      type="text"
+                      placeholder="Search products…"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="toolbar__searchInput"
+                    />
+                  </div>
 
-  <div className="toolbar__side toolbar__sort">
-    <select
-      value={sortBy}
-      onChange={(e) => setSortBy(e.target.value)}
-      className="select"
-      aria-label="Sort products"
-    >
-      <option value="default">Sort: Featured</option>
-      <option value="price-asc">Price · Low → High</option>
-      <option value="price-desc">Price · High → Low</option>
-      <option value="name-asc">Name · A → Z</option>
-      <option value="name-desc">Name · Z → A</option>
-    </select>
-  </div>
-</section>
+                  <div className="toolbar__side toolbar__sort">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="select"
+                      aria-label="Sort products"
+                    >
+                      <option value="default">Sort: Featured</option>
+                      <option value="price-asc">Price · Low → High</option>
+                      <option value="price-desc">Price · High → Low</option>
+                      <option value="name-asc">Name · A → Z</option>
+                      <option value="name-desc">Name · Z → A</option>
+                    </select>
+                  </div>
+                </section>
 
-<div className="filter-row">
-  <Filters
-    categories={categories}
-    category={activeCategoryId}
-    onSelect={setActiveCategoryId}
-  />
-</div>
-
+                <div className="filter-row">
+                  <Filters
+                    categories={categories}
+                    category={activeCategoryId}
+                    onSelect={setActiveCategoryId}
+                  />
+                </div>
 
                 {loading ? (
                   <div>Loading…</div>
@@ -153,7 +160,10 @@ export default function App() {
 
       {!isProfilePage && (
         <>
-          <ProductPanel product={openProduct} onClose={() => setOpenProduct(null)} />
+          <ProductPanel
+            product={openProduct}
+            onClose={() => setOpenProduct(null)}
+          />
 
           {showCart && (
             <CartView
@@ -168,11 +178,16 @@ export default function App() {
           {showCheckout && (
             <CheckoutDrawer
               onClose={() => setShowCheckout(false)}
-              onPlaced={() => { setShowOrderModal(true); setShowCheckout(false); }}
-              />
+              onPlaced={() => {
+                setShowOrderModal(true);
+                setShowCheckout(false);
+              }}
+            />
           )}
 
-          {showOrderModal && <OrderPlacedModal onClose={() => setShowOrderModal(false)} />}
+          {showOrderModal && (
+            <OrderPlacedModal onClose={() => setShowOrderModal(false)} />
+          )}
         </>
       )}
     </div>

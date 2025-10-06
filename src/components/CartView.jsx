@@ -16,10 +16,8 @@ export default function CartView({ onClose, onCheckout }) {
 
   return (
     <>
-      {/* Backdrop closes */}
       <div className="panel-backdrop" onClick={() => { console.log("[CartView] backdrop -> close"); onClose(); }} />
 
-      {/* Drawer */}
       <aside className="panel">
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
           <h3 className="card__title">Your cart</h3>

@@ -8,17 +8,13 @@ export default function ProductPanel({ product, onClose }) {
   const [qty, setQty] = useState(1);
   const closeRef = useRef(null);
 
-  // keep hooks stable; only act when open
   useEffect(() => {
     if (!product) return;
 
-    // reset qty when product changes
     setQty(1);
 
-    // focus close button for accessibility
     closeRef.current?.focus?.();
 
-    // lock body scroll
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
