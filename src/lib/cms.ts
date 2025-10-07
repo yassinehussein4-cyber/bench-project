@@ -9,7 +9,8 @@ export const cms = createClient({
 const IMAGE_FIELD_ID = "image";
 const CATEGORY_FIELD_ID = "category";
 
-const toHttps = (u?: string) => (u ? (u.startsWith("http") ? u : `https:${u}`) : "");
+const toHttps = (u?: string) =>
+  u ? (u.startsWith("http") ? u : `https:${u}`) : "";
 
 function resolveAssetUrl(entry: any, includes?: { Asset?: any[] }): string {
   const field = entry?.fields?.[IMAGE_FIELD_ID];
@@ -42,11 +43,15 @@ function resolveCategory(entry: any, includes?: { Entry?: any[] }) {
   if (!ref) return { categoryId: null, categoryTitle: null };
 
   if (ref?.fields?.title) {
-    return { categoryId: ref.sys?.id ?? null, categoryTitle: ref.fields.title ?? null };
+    return {
+      categoryId: ref.sys?.id ?? null,
+      categoryTitle: ref.fields.title ?? null,
+    };
   }
 
   const id = ref?.sys?.id;
-  if (!id || !includes?.Entry) return { categoryId: id ?? null, categoryTitle: null };
+  if (!id || !includes?.Entry)
+    return { categoryId: id ?? null, categoryTitle: null };
   const hit = includes.Entry.find((e: any) => e.sys?.id === id);
   return { categoryId: id, categoryTitle: hit?.fields?.title ?? null };
 }
@@ -65,7 +70,10 @@ export type CmsCategory = { id: string; title: string; slug?: string };
 
 /** ---- Fetch all products ---- */
 export async function fetchProducts(): Promise<CmsProduct[]> {
-  if (!import.meta.env.VITE_CONTENTFUL_SPACE_ID || !import.meta.env.VITE_CONTENTFUL_DELIVERY_TOKEN) {
+  if (
+    !import.meta.env.VITE_CONTENTFUL_SPACE_ID ||
+    !import.meta.env.VITE_CONTENTFUL_DELIVERY_TOKEN
+  ) {
     console.error(" Missing Contentful env vars. Check .env.local.");
   }
 
@@ -100,7 +108,9 @@ export async function fetchCategoriesFromCMS(): Promise<CmsCategory[]> {
     title: it.fields.title,
     slug:
       it.fields.slug ||
-      (it.fields.title ? String(it.fields.title).toLowerCase().replace(/\s+/g, "-") : undefined),
+      (it.fields.title
+        ? String(it.fields.title).toLowerCase().replace(/\s+/g, "-")
+        : undefined),
   }));
 }
 
@@ -114,9 +124,9 @@ export async function fetchProductsPage({
 }: {
   limit?: number;
   page?: number;
-  categoryId?: string; 
-  query?: string;      
-  order?: string[];   
+  categoryId?: string;
+  query?: string;
+  order?: string[];
 }): Promise<{ items: CmsProduct[]; total: number; pages: number }> {
   const skip = page * limit;
   const params: Record<string, any> = {
@@ -155,7 +165,6 @@ export async function fetchProductsPage({
   };
 }
 
-
 type Profile = {
   id: string;
   slug: string;
@@ -165,7 +174,8 @@ type Profile = {
   avatarUrl?: string;
 };
 
-const https = (u?: string) => (u ? (u.startsWith("http") ? u : `https:${u}`) : "");
+const https = (u?: string) =>
+  u ? (u.startsWith("http") ? u : `https:${u}`) : "";
 
 export async function fetchProfile(slug = "owner"): Promise<Profile | null> {
   const res = await cms.getEntries({
@@ -179,7 +189,9 @@ export async function fetchProfile(slug = "owner"): Promise<Profile | null> {
 
   let url =
     it.fields.avatar?.fields?.file?.url ??
-    res.includes?.Asset?.find((a: any) => a.sys?.id === it.fields.avatar?.sys?.id)?.fields?.file?.url;
+    res.includes?.Asset?.find(
+      (a: any) => a.sys?.id === it.fields.avatar?.sys?.id,
+    )?.fields?.file?.url;
 
   return {
     id: it.sys.id,
@@ -190,6 +202,5 @@ export async function fetchProfile(slug = "owner"): Promise<Profile | null> {
     avatarUrl: https(url),
   };
 }
-
 
 export default cms;

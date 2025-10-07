@@ -4,8 +4,6 @@ export const useCart = create((set) => ({
   // 🛒 State: the list of cart items
   items: [], // each item: { id, title, price, qty, imageUrl, category }
 
-  
-
   // ➕ Add product to cart (or increase qty if it exists)
   add: (product, qty = 1) => {
     set((state) => {
@@ -16,7 +14,7 @@ export const useCart = create((set) => ({
         // 2️⃣ If it exists, update its qty
         return {
           items: state.items.map((i) =>
-            i.id === product.id ? { ...i, qty: i.qty + qty } : i
+            i.id === product.id ? { ...i, qty: i.qty + qty } : i,
           ),
         };
       }
@@ -30,7 +28,7 @@ export const useCart = create((set) => ({
   inc: (id) => {
     set((state) => ({
       items: state.items.map((i) =>
-        i.id === id ? { ...i, qty: i.qty + 1 } : i
+        i.id === id ? { ...i, qty: i.qty + 1 } : i,
       ),
     }));
   },
@@ -39,7 +37,7 @@ export const useCart = create((set) => ({
   dec: (id) => {
     set((state) => ({
       items: state.items.map((i) =>
-        i.id === id ? { ...i, qty: Math.max(1, i.qty - 1) } : i
+        i.id === id ? { ...i, qty: Math.max(1, i.qty - 1) } : i,
       ),
     }));
   },
@@ -52,7 +50,7 @@ export const useCart = create((set) => ({
 
       return {
         items: state.items.map((i) =>
-          i.id === id ? { ...i, qty: safeQty } : i
+          i.id === id ? { ...i, qty: safeQty } : i,
         ),
       };
     });
@@ -69,6 +67,4 @@ export const useCart = create((set) => ({
   clear: () => {
     set({ items: [] });
   },
-
-
 }));

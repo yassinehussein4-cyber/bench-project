@@ -43,13 +43,27 @@ export default function ProductPanel({ product, onClose }) {
     <>
       <div className="modal-backdrop" onClick={onClose} />
 
-      <div className="modal-card" role="dialog" aria-modal="true" aria-label={`Product ${product.title}`}>
-        <button ref={closeRef} className="modal-card__close btn" onClick={onClose} aria-label="Close product dialog">
+      <div
+        className="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Product ${product.title}`}
+      >
+        <button
+          ref={closeRef}
+          className="modal-card__close btn"
+          onClick={onClose}
+          aria-label="Close product dialog"
+        >
           ✕
         </button>
 
         {hasImage ? (
-          <img src={product.imageUrl} alt={product.title} className="modal-card__img" />
+          <img
+            src={product.imageUrl}
+            alt={product.title}
+            className="modal-card__img"
+          />
         ) : (
           <div
             className="modal-card__img"
@@ -66,11 +80,19 @@ export default function ProductPanel({ product, onClose }) {
           </div>
         )}
 
-        <h3 className="card__title" style={{ marginTop: 10 }}>{product.title}</h3>
+        <h3 className="card__title" style={{ marginTop: 10 }}>
+          {product.title}
+        </h3>
         <div className="card__price">€{product.price}</div>
 
         <div className="modal-card__qty">
-          <button className="btn" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Decrease quantity">−</button>
+          <button
+            className="btn"
+            onClick={() => setQty((q) => Math.max(1, q - 1))}
+            aria-label="Decrease quantity"
+          >
+            −
+          </button>
           <input
             type="number"
             min={1}
@@ -80,12 +102,24 @@ export default function ProductPanel({ product, onClose }) {
             className="modal-card__input"
             inputMode="numeric"
           />
-          <button className="btn" onClick={() => setQty((q) => q + 1)} aria-label="Increase quantity">+</button>
+          <button
+            className="btn"
+            onClick={() => setQty((q) => q + 1)}
+            aria-label="Increase quantity"
+          >
+            +
+          </button>
         </div>
 
-        <div style={{ fontWeight: 600, marginTop: 6 }}>Subtotal: €{subtotal}</div>
+        <div style={{ fontWeight: 600, marginTop: 6 }}>
+          Subtotal: €{subtotal}
+        </div>
 
-        <button className="btn btn--primary" style={{ marginTop: 10 }} onClick={addToCart}>
+        <button
+          className="btn btn--primary"
+          style={{ marginTop: 10 }}
+          onClick={addToCart}
+        >
           Add {qty} to cart
         </button>
       </div>

@@ -5,7 +5,13 @@ export default function ProductGrid({ products = [], onSelectProduct }) {
   const addToCart = useCart((s) => s.add);
 
   return (
-    <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
+    <div
+      style={{
+        display: "grid",
+        gap: 16,
+        gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+      }}
+    >
       {products.map((p) => (
         <article
           key={p.id}
@@ -26,7 +32,12 @@ export default function ProductGrid({ products = [], onSelectProduct }) {
             <img
               src={p.imageUrl}
               alt={p.title}
-              style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 8 }}
+              style={{
+                width: "100%",
+                height: 160,
+                objectFit: "cover",
+                borderRadius: 8,
+              }}
             />
           ) : (
             <div
@@ -49,7 +60,9 @@ export default function ProductGrid({ products = [], onSelectProduct }) {
           <div style={{ marginTop: 8, fontWeight: 600 }}>{p.title}</div>
           {/* show category name if present */}
           {p.categoryTitle && (
-            <div style={{ color: "#6b7280", fontSize: 12 }}>{p.categoryTitle}</div>
+            <div style={{ color: "#6b7280", fontSize: 12 }}>
+              {p.categoryTitle}
+            </div>
           )}
           <div style={{ color: "#6b7280" }}>€{p.price}</div>
 
@@ -81,7 +94,9 @@ export default function ProductGrid({ products = [], onSelectProduct }) {
       ))}
 
       {products.length === 0 && (
-        <div style={{ color: "crimson", fontWeight: 600 }}>No products in this category.</div>
+        <div style={{ color: "crimson", fontWeight: 600 }}>
+          No products in this category.
+        </div>
       )}
     </div>
   );

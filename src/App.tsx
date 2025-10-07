@@ -19,7 +19,7 @@ export default function App() {
 
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<{ id: string; title: string }[]>(
-    []
+    [],
   );
   const [activeCategoryId, setActiveCategoryId] = useState("all");
   const [openProduct, setOpenProduct] = useState<any>(null);
@@ -67,7 +67,7 @@ export default function App() {
       list = list.filter(
         (p) =>
           p.title.toLowerCase().includes(q) ||
-          p.description?.toLowerCase().includes(q)
+          p.description?.toLowerCase().includes(q),
       );
     }
 
