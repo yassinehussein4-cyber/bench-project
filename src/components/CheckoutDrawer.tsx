@@ -1,44 +1,40 @@
-import { useState, useMemo, useEffect } from "react";
+import { useMemo, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useCart } from "../lib/Cart";
 import { useToast } from "../lib/toast";
 
-export default function CheckoutDrawer({ onClose, onPlaced }) {
+type CheckoutDrawerProps = {
+  onClose: () => void;
+  onPlaced?: () => void;
+};
+
+export default function CheckoutDrawer({ onClose, onPlaced }: CheckoutDrawerProps) {
   const { items, clear } = useCart();
   const push = useToast((s) => s.push);
 
   // Close on ESC
   useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-    };
+    const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    address: "",
-    promo: "",
+  const {register, handleSubmit, watch,formState: { errors, isSubmitting, isSubmitted }, setValue,} = useForm({
+    mode: "onChange",
+    defaultValues: { name: "", email: "", address: "", promo: "" },
   });
+
   const subtotal = useMemo(
     () => items.reduce((t, i) => t + i.price * i.qty, 0),
     [items]
   );
   const shipping = subtotal > 200 || subtotal === 0 ? 0 : 5;
-  const promoOff =
-    form.promo.trim().toUpperCase() === "SAVE10" ? subtotal * 0.1 : 0;
+
+  const promoCode = (watch("promo") || "").trim().toUpperCase();
+  const promoOff = promoCode === "SAVE10" ? subtotal * 0.1 : 0;
   const total = Math.max(0, subtotal + shipping - promoOff);
-
-  const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (!form.name || !form.email || !form.address) {
-      push("Please fill all required fields");
-      return;
-    }
-    push(`Order placed! Total €${total.toFixed(2)}`);
+  const onSubmit = async () => {
+    push(`Order placed!}`);
     clear();
     onPlaced?.();
     onClose();
@@ -48,32 +44,15 @@ export default function CheckoutDrawer({ onClose, onPlaced }) {
     <>
       <div
         className="panel-backdrop"
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,.4)",
-          zIndex: 60,
-        }}
+        style={{position: "fixed",inset: 0,background: "rgba(0,0,0,.4)",zIndex: 60}}
         onClick={onClose}
       />
       <aside
         className="panel"
-        style={{
-          position: "fixed",
-          top: 0,
-          right: 0,
-          height: "100%",
-          width: "100%",
-          maxWidth: 420,
-          zIndex: 70,
-        }}
+        style={{position: "fixed",top: 0,right: 0,height: "100%",width: "100%",maxWidth: 420,zIndex: 70}}
       >
         <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
+          style={{display: "flex",justifyContent: "space-between",alignItems: "center",}}
         >
           <h3 className="card__title">Checkout</h3>
           <button className="btn" onClick={onClose}>
@@ -90,11 +69,7 @@ export default function CheckoutDrawer({ onClose, onPlaced }) {
               {items.map((i) => (
                 <div
                   key={i.id}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: 6,
-                  }}
+                  style={{display: "flex",justifyContent: "space-between",marginBottom: 6}}
                 >
                   <span>
                     {i.title} × {i.qty}
@@ -130,12 +105,7 @@ export default function CheckoutDrawer({ onClose, onPlaced }) {
                 </div>
               )}
               <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontWeight: 700,
-                  marginTop: 8,
-                }}
+                style={{display: "flex",justifyContent: "space-between",fontWeight: 700,marginTop: 8}}
               >
                 <span>Total</span>
                 <span>€{total.toFixed(2)}</span>
@@ -145,71 +115,96 @@ export default function CheckoutDrawer({ onClose, onPlaced }) {
         </div>
 
         <form
-          onSubmit={onSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           style={{ display: "grid", gap: 10, marginTop: 12 }}
+          noValidate
         >
-          <input
-            name="name"
-            placeholder="Full name*"
-            value={form.name}
-            onChange={onChange}
-            style={{
-              padding: 10,
-              border: "1px solid var(--border)",
-              borderRadius: 10,
-            }}
-          />
-          <input
-            name="email"
-            placeholder="Email*"
-            value={form.email}
-            onChange={onChange}
-            style={{
-              padding: 10,
-              border: "1px solid var(--border)",
-              borderRadius: 10,
-            }}
-          />
-          <textarea
-            name="address"
-            placeholder="Shipping address*"
-            rows={3}
-            value={form.address}
-            onChange={onChange}
-            style={{
-              padding: 10,
-              border: "1px solid var(--border)",
-              borderRadius: 10,
-            }}
-          />
+          <div>
+            <input
+              placeholder="Full name*"
+              aria-invalid={!!errors.name}
+              {...register("name", {
+                required: "Name is required",
+                minLength: { value: 2, message: "Min 2 characters" },
+              })}
+              style={{padding: 10,border: "1px solid var(--border)",borderRadius: 10,width: "100%",
+              }}
+            />
+            {errors.name && (
+              <p style={{ color: "#dc2626", fontSize: 12 }}>
+                {errors.name.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <input
+              placeholder="Email*"
+              inputMode="email"
+              aria-invalid={!!errors.email}
+              {...register("email", {
+                required: "Email is required",
+                pattern: { value: /^\S+@\S+$/i, message: "Invalid email" },
+              })}
+              style={{padding: 10,border: "1px solid var(--border)",borderRadius: 10,width: "100%",}}
+            />
+            {errors.email && (
+              <p style={{ color: "#dc2626", fontSize: 12 }}>
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <textarea
+              placeholder="Shipping address*"
+              rows={3}
+              aria-invalid={!!errors.address}
+              {...register("address", {
+                required: "Address is required",
+                minLength: { value: 6, message: "Add more address details" },
+              })}
+              style={{padding: 10,border: "1px solid var(--border)",borderRadius: 10,width: "100%",
+              }}
+            />
+            {errors.address && (
+              <p style={{ color: "#dc2626", fontSize: 12 }}>
+                {errors.address.message}
+              </p>
+            )}
+          </div>
+
           <div style={{ display: "flex", gap: 8 }}>
             <input
-              name="promo"
               placeholder="Promo code (SAVE10)"
-              value={form.promo}
-              onChange={onChange}
-              style={{
-                flex: 1,
-                padding: 10,
-                border: "1px solid var(--border)",
-                borderRadius: 10,
-              }}
+              {...register("promo")}
+              style={{flex: 1,padding: 10,border: "1px solid var(--border)",borderRadius: 10}}
             />
             <button
               type="button"
               className="btn"
-              onClick={() => push("Promo applied if valid")}
+              onClick={() => {
+                const v = (promoCode || "").trim().toUpperCase();
+                push(v === "SAVE10" ? "Promo applied" : "Invalid promo");
+                setValue("promo", v, { shouldDirty: true });
+              }}
             >
               Apply
             </button>
           </div>
+
+          {isSubmitted && Object.keys(errors).length > 0 && (
+            <p style={{ color: "#dc2626", fontSize: 13 }}>
+              Please fill in all required fields.
+            </p>
+          )}
+
           <button
             type="submit"
             className="btn btn--primary"
-            onClick={onPlaced}
-            disabled={items.length === 0}
+            disabled={items.length === 0 || isSubmitting}
           >
-            Place order
+            {isSubmitting ? "Placing..." : "Place order"}
           </button>
         </form>
       </aside>
