@@ -23,7 +23,7 @@ export default function CheckoutDrawer({ onClose, onPlaced }) {
   });
   const subtotal = useMemo(
     () => items.reduce((t, i) => t + i.price * i.qty, 0),
-    [items],
+    [items]
   );
   const shipping = subtotal > 200 || subtotal === 0 ? 0 : 5;
   const promoOff =
