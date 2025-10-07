@@ -1,29 +1,22 @@
-// src/lib/cms.ts
 import { createClient } from "contentful";
 
-/** ---- Client ---- */
 export const cms = createClient({
   space: import.meta.env.VITE_CONTENTFUL_SPACE_ID!,
   accessToken: import.meta.env.VITE_CONTENTFUL_DELIVERY_TOKEN!,
   environment: import.meta.env.VITE_CONTENTFUL_ENV || "master",
 });
 
-/** change these if your field IDs are different */
 const IMAGE_FIELD_ID = "image";
 const CATEGORY_FIELD_ID = "category";
 
-/** ---- Helpers ---- */
 const toHttps = (u?: string) => (u ? (u.startsWith("http") ? u : `https:${u}`) : "");
 
-/** Resolve url when field is an Asset, a Link, or an array of Links/Assets */
 function resolveAssetUrl(entry: any, includes?: { Asset?: any[] }): string {
   const field = entry?.fields?.[IMAGE_FIELD_ID];
   if (!field) return "";
 
-  // Already resolved Asset
   if (field?.fields?.file?.url) return toHttps(field.fields.file.url);
 
-  // Array field (gallery) → use first item
   if (Array.isArray(field)) {
     const first = field[0];
     if (first?.fields?.file?.url) return toHttps(first.fields.file.url);
@@ -35,7 +28,6 @@ function resolveAssetUrl(entry: any, includes?: { Asset?: any[] }): string {
     return "";
   }
 
-  // Link to an Asset → look up in includes.Asset
   const linkId = field?.sys?.id;
   if (linkId && includes?.Asset) {
     const asset = includes.Asset.find((a) => a.sys?.id === linkId);
@@ -45,24 +37,20 @@ function resolveAssetUrl(entry: any, includes?: { Asset?: any[] }): string {
   return "";
 }
 
-/** Single category reference → {id, title}; safe if missing */
 function resolveCategory(entry: any, includes?: { Entry?: any[] }) {
   const ref = entry?.fields?.[CATEGORY_FIELD_ID];
   if (!ref) return { categoryId: null, categoryTitle: null };
 
-  // already resolved
   if (ref?.fields?.title) {
     return { categoryId: ref.sys?.id ?? null, categoryTitle: ref.fields.title ?? null };
   }
 
-  // link → find in includes.Entry
   const id = ref?.sys?.id;
   if (!id || !includes?.Entry) return { categoryId: id ?? null, categoryTitle: null };
   const hit = includes.Entry.find((e: any) => e.sys?.id === id);
   return { categoryId: id, categoryTitle: hit?.fields?.title ?? null };
 }
 
-/** ---- Shapes your UI uses ---- */
 export type CmsProduct = {
   id: string;
   title: string;
@@ -78,7 +66,7 @@ export type CmsCategory = { id: string; title: string; slug?: string };
 /** ---- Fetch all products ---- */
 export async function fetchProducts(): Promise<CmsProduct[]> {
   if (!import.meta.env.VITE_CONTENTFUL_SPACE_ID || !import.meta.env.VITE_CONTENTFUL_DELIVERY_TOKEN) {
-    console.error("⚠️ Missing Contentful env vars. Check .env.local.");
+    console.error(" Missing Contentful env vars. Check .env.local.");
   }
 
   const res = await cms.getEntries({
@@ -101,7 +89,7 @@ export async function fetchProducts(): Promise<CmsProduct[]> {
   });
 }
 
-/** ---- Fetch categories for your Filters ---- */
+/** ---- Fetch categories  ---- */
 export async function fetchCategoriesFromCMS(): Promise<CmsCategory[]> {
   const res = await cms.getEntries({
     content_type: "category",
@@ -116,7 +104,7 @@ export async function fetchCategoriesFromCMS(): Promise<CmsCategory[]> {
   }));
 }
 
-/** ---- Paged fetch with server-side filter + full-text search (optional) ---- */
+/** ---- Paged fetch with server-side filter + full-text search ---- */
 export async function fetchProductsPage({
   limit = 12,
   page = 0,
@@ -126,9 +114,9 @@ export async function fetchProductsPage({
 }: {
   limit?: number;
   page?: number;
-  categoryId?: string; // "all" or undefined = no filter
-  query?: string;      // full-text search
-  order?: string[];    // e.g. ["fields.price"] or ["-sys.createdAt"]
+  categoryId?: string; 
+  query?: string;      
+  order?: string[];   
 }): Promise<{ items: CmsProduct[]; total: number; pages: number }> {
   const skip = page * limit;
   const params: Record<string, any> = {
@@ -168,7 +156,6 @@ export async function fetchProductsPage({
 }
 
 
-// --- Profile fetcher ---
 type Profile = {
   id: string;
   slug: string;
@@ -190,7 +177,6 @@ export async function fetchProfile(slug = "owner"): Promise<Profile | null> {
   const it: any = res.items?.[0];
   if (!it) return null;
 
-  // resolve avatar url (resolved or link)
   let url =
     it.fields.avatar?.fields?.file?.url ??
     res.includes?.Asset?.find((a: any) => a.sys?.id === it.fields.avatar?.sys?.id)?.fields?.file?.url;
