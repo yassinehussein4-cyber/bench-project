@@ -1,4 +1,3 @@
-// src/components/ProfilePage.tsx
 import { useEffect, useMemo, useState } from "react";
 import { fetchProfile } from "../lib/cms";
 
