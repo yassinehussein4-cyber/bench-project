@@ -4,22 +4,36 @@ import { useCart } from "../lib/useCart";
 import { useToast } from "../lib/useToast";
 
 type CheckoutDrawerProps = {
-  onClose: () => void;
-  onPlaced?: () => void;
+  readonly onClose: () => void;
+  readonly onPlaced?: () => void;
 };
 
-export default function CheckoutDrawer({ onClose, onPlaced }: CheckoutDrawerProps) {
-  const { items, clear } = useCart();
-  const push = useToast((s) => s.push);
+type CartItem = { id: string; title: string; price: number; qty: number };
+
+export default function CheckoutDrawer({
+  onClose,
+  onPlaced,
+}: CheckoutDrawerProps) {
+  const { items, clear } = useCart() as {
+    items: CartItem[];
+    clear: () => void;
+  };
+  const push = useToast((s: any) => s.push) as (msg: string) => void;
 
   // Close on ESC
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  const {register, handleSubmit, watch,formState: { errors, isSubmitting, isSubmitted }, setValue,} = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting, isSubmitted },
+    setValue,
+  } = useForm({
     mode: "onChange",
     defaultValues: { name: "", email: "", address: "", promo: "" },
   });
@@ -33,8 +47,9 @@ export default function CheckoutDrawer({ onClose, onPlaced }: CheckoutDrawerProp
   const promoCode = (watch("promo") || "").trim().toUpperCase();
   const promoOff = promoCode === "SAVE10" ? subtotal * 0.1 : 0;
   const total = Math.max(0, subtotal + shipping - promoOff);
+
   const onSubmit = async () => {
-    push(`Order placed!}`);
+    push("Order placed!");
     clear();
     onPlaced?.();
     onClose();
@@ -42,71 +57,57 @@ export default function CheckoutDrawer({ onClose, onPlaced }: CheckoutDrawerProp
 
   return (
     <>
-      <div
-        className="panel-backdrop"
-        style={{position: "fixed",inset: 0,background: "rgba(0,0,0,.4)",zIndex: 60}}
+      <button
+        type="button"
+        aria-label="Close drawer"
+        className="panel-backdrop-drawer"
         onClick={onClose}
       />
-      <aside
-        className="panel"
-        style={{position: "fixed",top: 0,right: 0,height: "100%",width: "100%",maxWidth: 420,zIndex: 70}}
-      >
-        <div
-          style={{display: "flex",justifyContent: "space-between",alignItems: "center",}}
-        >
+
+      <aside className="panel-drawer">
+        <div className="drawer__header">
           <h3 className="card__title">Checkout</h3>
           <button className="btn" onClick={onClose}>
             Close
           </button>
         </div>
 
-        <div className="card" style={{ padding: 12, marginTop: 12 }}>
-          <div style={{ fontWeight: 600, marginBottom: 8 }}>Order summary</div>
+        <div className="card card__body">
+          <div className="font-semibold mb-2">Order summary</div>
+
           {items.length === 0 ? (
             <div className="card__price">Your cart is empty.</div>
           ) : (
             <>
-              {items.map((i) => (
-                <div
-                  key={i.id}
-                  style={{display: "flex",justifyContent: "space-between",marginBottom: 6}}
-                >
+              {items.map((i: CartItem) => (
+                <div key={i.id} className="flex justify-between mb-1.5">
                   <span>
                     {i.title} × {i.qty}
                   </span>
                   <span>€{(i.price * i.qty).toFixed(2)}</span>
                 </div>
               ))}
-              <hr
-                style={{
-                  border: "none",
-                  borderTop: "1px solid var(--border)",
-                  margin: "8px 0",
-                }}
-              />
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+
+              <hr className="hr-border" />
+
+              <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span>€{subtotal.toFixed(2)}</span>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+
+              <div className="flex justify-between">
                 <span>Shipping</span>
                 <span>{shipping ? `€${shipping.toFixed(2)}` : "Free"}</span>
               </div>
+
               {promoOff > 0 && (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    color: "#059669",
-                  }}
-                >
+                <div className="flex justify-between text-success">
                   <span>Promo (SAVE10)</span>
                   <span>−€{promoOff.toFixed(2)}</span>
                 </div>
               )}
-              <div
-                style={{display: "flex",justifyContent: "space-between",fontWeight: 700,marginTop: 8}}
-              >
+
+              <div className="flex justify-between font-bold mt-2">
                 <span>Total</span>
                 <span>€{total.toFixed(2)}</span>
               </div>
@@ -116,7 +117,7 @@ export default function CheckoutDrawer({ onClose, onPlaced }: CheckoutDrawerProp
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          style={{ display: "grid", gap: 10, marginTop: 12 }}
+          className="grid gap-3 mt-3"
           noValidate
         >
           <div>
@@ -127,13 +128,10 @@ export default function CheckoutDrawer({ onClose, onPlaced }: CheckoutDrawerProp
                 required: "Name is required",
                 minLength: { value: 2, message: "Min 2 characters" },
               })}
-              style={{padding: 10,border: "1px solid var(--border)",borderRadius: 10,width: "100%",
-              }}
+              className="input-bordered"
             />
             {errors.name && (
-              <p style={{ color: "#dc2626", fontSize: 12 }}>
-                {errors.name.message}
-              </p>
+              <p className="text-error text-sm">{errors.name.message}</p>
             )}
           </div>
 
@@ -146,12 +144,10 @@ export default function CheckoutDrawer({ onClose, onPlaced }: CheckoutDrawerProp
                 required: "Email is required",
                 pattern: { value: /^\S+@\S+$/i, message: "Invalid email" },
               })}
-              style={{padding: 10,border: "1px solid var(--border)",borderRadius: 10,width: "100%",}}
+              className="input-bordered"
             />
             {errors.email && (
-              <p style={{ color: "#dc2626", fontSize: 12 }}>
-                {errors.email.message}
-              </p>
+              <p className="text-error text-sm">{errors.email.message}</p>
             )}
           </div>
 
@@ -164,21 +160,18 @@ export default function CheckoutDrawer({ onClose, onPlaced }: CheckoutDrawerProp
                 required: "Address is required",
                 minLength: { value: 6, message: "Add more address details" },
               })}
-              style={{padding: 10,border: "1px solid var(--border)",borderRadius: 10,width: "100%",
-              }}
+              className="input-bordered"
             />
             {errors.address && (
-              <p style={{ color: "#dc2626", fontSize: 12 }}>
-                {errors.address.message}
-              </p>
+              <p className="text-error text-sm">{errors.address.message}</p>
             )}
           </div>
 
-          <div style={{ display: "flex", gap: 8 }}>
+          <div className="flex gap-2">
             <input
               placeholder="Promo code (SAVE10)"
               {...register("promo")}
-              style={{flex: 1,padding: 10,border: "1px solid var(--border)",borderRadius: 10}}
+              className="promo-input"
             />
             <button
               type="button"
@@ -194,14 +187,14 @@ export default function CheckoutDrawer({ onClose, onPlaced }: CheckoutDrawerProp
           </div>
 
           {isSubmitted && Object.keys(errors).length > 0 && (
-            <p style={{ color: "#dc2626", fontSize: 13 }}>
+            <p className="text-error text-sm-lg">
               Please fill in all required fields.
             </p>
           )}
 
           <button
             type="submit"
-            className="btn btn--primary"
+            className="btn btn--secondary"
             disabled={items.length === 0 || isSubmitting}
           >
             {isSubmitting ? "Placing..." : "Place order"}

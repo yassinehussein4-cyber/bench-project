@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect } from "react";
 import { useCart } from "../lib/useCart";
 
@@ -18,15 +19,17 @@ export default function CartView({ onClose, onCheckout }) {
 
   return (
     <>
-      <div
-        className="panel-backdrop"
+      <button
+        type="button"
+        aria-label="Close cart"
+        className="panel-backdrop-drawer"
         onClick={() => {
           console.log("[CartView] backdrop -> close");
           onClose();
         }}
       />
 
-      <aside className="panel">
+      <aside className="panel-drawer">
         <div
           style={{
             display: "flex",
@@ -131,7 +134,7 @@ export default function CartView({ onClose, onCheckout }) {
                   Clear
                 </button>
                 <button
-                  className="btn btn--primary"
+                  className="btn btn--secondary"
                   onClick={() => {
                     console.log("[CartView] checkout -> open");
                     onCheckout();
