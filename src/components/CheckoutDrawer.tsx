@@ -1,7 +1,7 @@
 import { useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useCart } from "../lib/Cart";
-import { useToast } from "../lib/toast";
+import { useCart } from "../lib/useCart";
+import { useToast } from "../lib/useToast";
 
 type CheckoutDrawerProps = {
   onClose: () => void;

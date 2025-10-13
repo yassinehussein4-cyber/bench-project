@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useCart } from "../lib/Cart";
+import { useCart } from "../lib/useCart";
 
 export default function CartView({ onClose, onCheckout }) {
   const { items, inc, dec, setQty, remove, clear } = useCart();

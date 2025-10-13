@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Filters from "../components/Filters";
 import ProductGrid from "../components/ProductGrid";
@@ -6,8 +6,8 @@ import ProductPanel from "../components/ProductPanel";
 import CartView from "../components/CartView";
 import CheckoutDrawer from "../components/CheckoutDrawer";
 import OrderPlacedModal from "../components/OrderPlacedModal";
-import { fetchProducts, fetchCategoriesFromCMS } from "../lib/cms";
 import { useDebouncedValue } from "../lib/useDebouncedValue";
+import { useCms } from "../cms-context";
 
 export default function HomePage() {
     const navigate = useNavigate();
@@ -21,28 +21,9 @@ export default function HomePage() {
     const isCheckoutOpen = searchParams.get("checkout") === "1";
     const isOrderPlacedOpen = searchParams.get("placed") === "1";
 
-    const [products, setProducts] = useState<any[]>([]);
-    const [categories, setCategories] = useState<{ id: string; title: string }[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [errorText, setErrorText] = useState<string | null>(null);
+    const { products, categories, loading, error } = useCms();
 
     const debouncedSearchQuery = useDebouncedValue(searchQuery, 300);
-
-    useEffect(() => {
-        (async () => {
-            try {
-                setIsLoading(true);
-                const [p, c] = await Promise.all([fetchProducts(), fetchCategoriesFromCMS()]);
-                setProducts(p);
-                setCategories([{ id: "all", title: "All" }, ...c]);
-            } catch (e) {
-                console.error(e);
-                setErrorText("Failed to load CMS content.");
-            } finally {
-                setIsLoading(false);
-            }
-        })();
-    }, []);
 
     const visibleProducts = useMemo(() => {
         let list = categoryParam === "all" ? products : products.filter(p => p.categoryId === categoryParam);
@@ -72,12 +53,13 @@ export default function HomePage() {
 
     const setParam = (k: string, v?: string) => updateParams({ [k]: v });
 
+    const cats = [{ id: "all", title: "All" }, ...categories];
     const selectedProduct =
         selectedProductId && products.find(p => String(p.id) === String(selectedProductId));
 
     return (
         <>
-            {errorText && <div className="text-red-600 font-semibold">{errorText}</div>}
+            {error && <div className="text-red-600 font-semibold">{error}</div>}
 
             <section className="toolbar">
                 <div className="toolbar__side" />
@@ -109,13 +91,13 @@ export default function HomePage() {
 
             <div className="filter-row">
                 <Filters
-                    categories={categories}
+                    categories={cats}
                     category={categoryParam}
                     onSelect={(id) => setParam("category", id)}
                 />
             </div>
 
-            {isLoading ? (
+            {loading && products.length === 0 ? (
                 <div>Loading…</div>
             ) : (
                 <ProductGrid
@@ -132,7 +114,7 @@ export default function HomePage() {
                 <CartView
                     onClose={() => setParam("cart")}
                     onCheckout={() =>
-                        updateParams({ cart: null, checkout: "1" }) 
+                        updateParams({ cart: null, checkout: "1" })
                     }
                 />
             )}

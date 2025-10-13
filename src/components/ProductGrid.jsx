@@ -1,5 +1,5 @@
 import Add from "../assets/Add.svg";
-import { useCart } from "../lib/Cart";
+import { useCart } from "../lib/useCart";
 
 export default function ProductGrid({ products = [], onSelectProduct }) {
   const addToCart = useCart((s) => s.add);

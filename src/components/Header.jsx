@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useCart } from "../lib/Cart";
+import { useCart } from "../lib/useCart";
 
 export default function Header({ onOpenCart }) {
   const items = useCart((s) => s.items);
