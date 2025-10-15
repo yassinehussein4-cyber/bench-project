@@ -2,20 +2,22 @@ import "./App.css";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
 import Header from "./components/Header";
-import ProfilePage from "./components/ProfilePage";
-import HomePage from "./components/HomePage";
+import ProfilePage from "./components/Pages/ProfilePage";
+import HomePage from "./components/Pages/HomePage";
 
 export default function App() {
   const navigate = useNavigate();
 
+  function handleOpenCart() {
+    const next = new URLSearchParams(window.location.search);
+    next.set("cart", "1");
+    navigate({ pathname: "/", search: next.toString() });
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header
-        onOpenCart={() => {
-          const next = new URLSearchParams(window.location.search);
-          next.set("cart", "1");
-          navigate({ pathname: "/", search: next.toString() });
-        }}
+        onOpenCart={handleOpenCart}
         onOpenProfile={() => navigate("/profile")}
       />
 

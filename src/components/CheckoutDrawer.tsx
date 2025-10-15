@@ -14,14 +14,14 @@ export default function CheckoutDrawer({ onClose, onPlaced }: CheckoutDrawerProp
 
   // Close on ESC
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  const {register, handleSubmit, watch,formState: { errors, isSubmitting, isSubmitted }, setValue,} = useForm({
-    mode: "onChange",
-    defaultValues: { name: "", email: "", address: "", promo: "" },
+  const { register, handleSubmit, watch, formState: { errors, isSubmitting, isSubmitted }, setValue, reset } = useForm({
+    mode: "onSubmit",
+    reValidateMode: "onChange", defaultValues: { name: "", email: "", address: "", promo: "" },
   });
 
   const subtotal = useMemo(
@@ -34,7 +34,8 @@ export default function CheckoutDrawer({ onClose, onPlaced }: CheckoutDrawerProp
   const promoOff = promoCode === "SAVE10" ? subtotal * 0.1 : 0;
   const total = Math.max(0, subtotal + shipping - promoOff);
   const onSubmit = async () => {
-    push(`Order placed!}`);
+    push(`Order placed!`);
+    reset();
     clear();
     onPlaced?.();
     onClose();

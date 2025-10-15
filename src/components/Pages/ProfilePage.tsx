@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { fetchProfile } from "../lib/cms";
+import { fetchProfile } from "../../lib/cms";
 
 type Profile = {
   id: string;

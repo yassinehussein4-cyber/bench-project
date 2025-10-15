@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Filters from "../components/Filters";
-import ProductGrid from "../components/ProductGrid";
-import ProductPanel from "../components/ProductPanel";
-import CartView from "../components/CartView";
-import CheckoutDrawer from "../components/CheckoutDrawer";
-import OrderPlacedModal from "../components/OrderPlacedModal";
-import { fetchProducts, fetchCategoriesFromCMS } from "../lib/cms";
-import { useDebouncedValue } from "../lib/useDebouncedValue";
+import Filters from "../Filters";
+import ProductGrid from "../ProductGrid";
+import ProductPanel from "../ProductPanel";
+import CartView from "../CartView";
+import CheckoutDrawer from "../CheckoutDrawer";
+import OrderPlacedModal from "../OrderPlacedModal";
+import { fetchProducts, fetchCategoriesFromCMS } from "../../lib/cms";
+import { useDebouncedValue } from "../../lib/useDebouncedValue";
 
 export default function HomePage() {
     const navigate = useNavigate();
