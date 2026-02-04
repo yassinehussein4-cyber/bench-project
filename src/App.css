@@ -6,14 +6,15 @@
 }
 
 /* Header */
-.header{
-  position: sticky; top: 0;
+.header {
+  position: sticky;
+  top: 0;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   z-index: 40;
   backdrop-filter: saturate(180%) blur(8px);
 }
-.header__inner{
+.header__inner {
   max-width: 1100px;
   margin: 0 auto;
   padding: 10px 16px;
@@ -22,27 +23,40 @@
   align-items: center;
   gap: 12px;
 }
-.brand{
+.brand {
   justify-self: center;
   font-weight: 700;
   font-size: 20px;
-  letter-spacing: .2px;
+  letter-spacing: 0.2px;
   color: var(--text);
   text-decoration: none;
 }
-.nav{ display: flex; align-items: center; gap: 12px; }
-.nav--left{ justify-self: start; }
-.nav--right{ justify-self: end; }
-.nav__link{
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nav--left {
+  justify-self: start;
+}
+.nav--right {
+  justify-self: end;
+}
+.nav__link {
   color: var(--muted);
   text-decoration: none;
   padding: 6px 8px;
   border-radius: 10px;
 }
-.nav__link:hover{ color: var(--text); background: #f6f7fb; }
+.nav__link:hover {
+  color: var(--text);
+  background: #f6f7fb;
+}
 
-.btn{
-  display: inline-flex; align-items: center; gap: 8px;
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   padding: 8px 12px;
   border: 1px solid var(--border);
   background: var(--surface);
@@ -50,18 +64,30 @@
   cursor: pointer;
   font-weight: 600;
 }
-.btn:hover{ box-shadow: var(--shadow); }
-
-.badge{
-  min-width: 22px; height: 22px;
-  display: inline-grid; place-items: center;
-  padding: 0 6px; font-size: 12px; line-height: 1;
-  background: #111827; color: #fff; border-radius: 999px;
+.btn:hover {
+  box-shadow: var(--shadow);
 }
 
-@media (max-width: 640px){
-  .nav--left{ display: none; }
-  .brand{ font-size: 18px; }
+.badge {
+  min-width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 6px;
+  font-size: 12px;
+  line-height: 1;
+  background: #111827;
+  color: #fff;
+  border-radius: 999px;
+}
+
+@media (max-width: 640px) {
+  .nav--left {
+    display: none;
+  }
+  .brand {
+    font-size: 18px;
+  }
 }
 
 .controls {
@@ -92,27 +118,32 @@
 }
 
 /* Backdrop */
-.modal-backdrop{
-  position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 50;
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 50;
 }
 
 /* Centered square popup */
 /* Backdrop over whole viewport */
-.modal-backdrop{
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.45);
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
   z-index: 50;
 }
 
 /* Centered square card */
-.modal-card{
+.modal-card {
   position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);    /* TRUE center */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* TRUE center */
   z-index: 60;
 
   width: min(520px, 92vw);
-  aspect-ratio: 1 / 1;                  /* square */
+  aspect-ratio: 1 / 1; /* square */
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -121,23 +152,44 @@
 
   display: flex;
   flex-direction: column;
-  overflow: hidden;                      /* keep square */
-  animation: modal-pop .18s ease-out;
+  overflow: hidden; /* keep square */
+  animation: modal-pop 0.18s ease-out;
 }
 
-.modal-card__close{ position: absolute; top: 10px; right: 10px; }
+.modal-card__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
 
-.modal-card__img{
+.modal-card__img {
   width: 100%;
   height: 58%;
   object-fit: cover;
   border-radius: 12px;
 }
 
-.modal-card__qty{ display: flex; align-items: center; gap: 8px; margin-top: 8px; }
-.modal-card__input{
-  width: 80px; padding: 8px; text-align: center;
-  border-radius: 10px; border: 1px solid var(--border);
+.modal-card__qty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.modal-card__input {
+  width: 80px;
+  padding: 8px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid var(--border);
 }
 
-@keyframes modal-pop{ from{ transform: translate(-50%,-50%) scale(.98); opacity:0 } to{ transform: translate(-50%,-50%) scale(1); opacity:1 } }
+@keyframes modal-pop {
+  from {
+    transform: translate(-50%, -50%) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}

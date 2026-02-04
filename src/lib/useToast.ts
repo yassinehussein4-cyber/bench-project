@@ -8,7 +8,7 @@ export const useToast = create((set) => ({
     set((s) => ({ toasts: [...s.toasts, { id: tid, msg }] }));
     setTimeout(
       () => set((s) => ({ toasts: s.toasts.filter((t) => t.id !== tid) })),
-      ms
+      ms,
     );
   },
   remove: (tid) =>

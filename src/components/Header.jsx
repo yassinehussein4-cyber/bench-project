@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useCart } from "../lib/Cart";
+import { useCart } from "../lib/useCart";
 
 export default function Header({ onOpenCart }) {
   const items = useCart((s) => s.items);
@@ -9,11 +9,17 @@ export default function Header({ onOpenCart }) {
     <header className="header" role="banner">
       <div className="header__inner">
         <nav className="nav nav--left" aria-label="Primary">
-          <Link to="/" className="nav__link">Home</Link>
-          <Link to="/profile" className="nav__link">Profile</Link>
+          <Link to="/" className="nav__link">
+            Home
+          </Link>
+          <Link to="/profile" className="nav__link">
+            Profile
+          </Link>
         </nav>
 
-        <Link className="brand" to="/">Mock Shop</Link>
+        <Link className="brand" to="/">
+          Mock Shop
+        </Link>
 
         <div className="nav nav--right">
           <button
