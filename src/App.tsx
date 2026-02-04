@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 
 import Header from "./components/Header";
 import ProfilePage from "./components/ProfilePage";
-import HomePage from "./components/HomePage";
+import HomePage from "./components/pages/HomePage";
 
 export default function App() {
   const navigate = useNavigate();
